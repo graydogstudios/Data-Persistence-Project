@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using TMPro;
 
 public class MainManager : MonoBehaviour
 {
@@ -18,10 +19,26 @@ public class MainManager : MonoBehaviour
     
     private bool m_GameOver = false;
 
-    
+    public TextMeshProUGUI bottomScoreText;
+    public TextMeshProUGUI topScoreText;
+    //public string realPlayerName;
+    //public TextMeshProUGUI playerName;
+
+
     // Start is called before the first frame update
     void Start()
     {
+        if (GameManager.Instance != null)
+
+        {
+            //playerName = GameManager.Instance.playerName;
+           // Debug.Log(playerName);
+            UpdateBottomScore();
+            GameManager.Instance.LoadHighScore();
+            UpdateTopScore();
+            
+            //UpdateHighScore();
+        }
         const float step = 0.6f;
         int perLine = Mathf.FloorToInt(4.0f / step);
         
@@ -65,12 +82,38 @@ public class MainManager : MonoBehaviour
     void AddPoint(int point)
     {
         m_Points += point;
-        ScoreText.text = $"Score : {m_Points}";
+
+        if (GameManager.Instance != null)
+        {
+            if (m_Points > GameManager.Instance.highScoreHighScore)
+            {
+               // GameManager.Instance.playerNameHighSc = GameManager.Instance.playerName;
+                GameManager.Instance.highScore = m_Points;
+                GameManager.Instance.SaveHighScore();
+            }
+        }
+        
+        UpdateBottomScore();
     }
 
     public void GameOver()
     {
         m_GameOver = true;
         GameOverText.SetActive(true);
+    }
+
+    public void UpdateBottomScore()
+
+    {
+
+        bottomScoreText.text = "Your Name : " + GameManager.Instance.playerName + " Your Score: "+ m_Points;
+        //highScoreText.text = "Best Score : " + GameManager.Instance.highScore + " Name : " + GameManager.Instance.playerName;
+    }
+    public void UpdateTopScore()
+
+    {
+
+        topScoreText.text = "Record Name : " + GameManager.Instance.playerNameHighScore + " High Score: " +GameManager.Instance.highScoreHighScore;
+        //highScoreText.text = "Best Score : " + GameManager.Instance.highScore + " Name : " + GameManager.Instance.playerName;
     }
 }
